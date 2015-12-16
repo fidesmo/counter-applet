@@ -7,7 +7,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.fidesmo:gradle-fidesmo:0.1.9'
+        classpath 'com.fidesmo:gradle-fidesmo:0.1.7'
     }
 }
 
@@ -23,11 +23,11 @@ dependencies {
 javacard {
     cap {
         aid = "${fidesmoPrefix}:0x01"
-        packageName = 'com.fidesmo.javacard.example'
+        packageName = 'com.fidesmo.javacard.counter'
         version = '1.0'
         applet {
             aid = "${fidesmoPrefix}:0x01:0x01"
-            className = 'ExampleCardlet'
+            className = 'CounterApplet'
         }
     }
 }

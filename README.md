@@ -1,5 +1,7 @@
-Fidesmo gradle plugin example
+Counter Applet
 =============================
+
+This is a very simple Java Card applet implementing a secure counter. It is based on the [Fidesmo gradle plugin example](https://github.com/fidesmo/gradle-fidesmo-example). You can read all about it in [this tutorial](https://developer.fidesmo.com/tutorials/javacard).
 
 This is an example project / template for building applications for the [Fidesmo
 card](http://fidesmo.com/). It's using the [Fidesmo gradle plugin](http://github.com/fidesmo/gradle-fidesmo).
@@ -22,7 +24,7 @@ portal](https://developer.fidesmo.com/).
     echo 'fidesmoAppId: yourAppID' >> $HOME/.gradle/gradle.properties
     echo 'fidesmoAppKey: yourAppKey' >> $HOME/.gradle/gradle.properties
 
-The fidesmo plugin installs per default to the aid a00000061700<fidesmoAppKey>0101.
+The fidesmo plugin installs per default to the aid a00000061700[fidesmoAppId]0101.
 
 Example usage
 -------------
@@ -34,22 +36,11 @@ Example usage
 
 Instead of a card reader you can now also use your [NFC enabled Android phone](https://github.com/fidesmo/gradle-fidesmo#android-phone-as-card-reader) to communicate with the card.
 
-Running the cardlet
--------------------
-Start up the APDU console built in to the SDK using the following
-command (`--no-daemon` is required for it to work properly):
+Functionality
+-------------
+- When installed, the applet will receive the initial counter value as install parameter. The initial counter value is limited to 1 byte: otherwise installation will fail with error code `6985`, "conditions of use not satisfied"
+- Command SELECT (A4) will return the current value of the counter
+- Command DECREMENT (00):
+    - If counter > 0, it will decrease its value and return the new value of the counter
+    - If counter = 0, it will return an error code `6985`
 
-    ./gradlew --no-daemon -q console
-
-Then first select the application using the SELECT
-(00A404000CA00000061700E26B8F120101) command and then send a command
-with a test payload (80CA000004DEADBEEF00). Your session should look
-like this:
-
-    > send 00A404000CA00000061700E26B8F120101
-    ==> ApduCommand(00A404000CA00000061700E26B8F120101)
-    <== ApduResponse(48656C6C6F2046696465736D6F219000)
-    > send 80ca000004deadbeef00
-    ==> ApduCommand(80CA000004DEADBEEF00)
-    <== ApduResponse(48656C6C6F2046696465736D6F219000)
-    >
