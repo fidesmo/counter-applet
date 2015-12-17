@@ -5,8 +5,10 @@ import javacard.framework.*;
 public class CounterApplet extends Applet
 {
     final static short noOffset = (short) 0;
+    final static short counterLength = (short) 1;
 
-    final byte[] value;
+    //final byte[] value;
+    protected byte value;
  
     // Stores the counter value received as installation parameter
     protected CounterApplet(byte[] bArray, short bOffset, byte bLength){
@@ -18,8 +20,7 @@ public class CounterApplet extends Applet
         if (length != 1) {
             ISOException.throwIt(ISO7816.SW_CONDITIONS_NOT_SATISFIED);
         }
-        value = new byte[length];
-        Util.arrayCopy(bArray, offset, value, noOffset, length);
+        value = bArray[(short)offset];
         register();
     }
 
@@ -50,18 +51,18 @@ public class CounterApplet extends Applet
         switch (buffer[ISO7816.OFFSET_INS]) {
         // SELECT instruction
         case ISO7816.INS_SELECT:
-            apdu.setOutgoingLength((short) value.length);
-            Util.arrayCopy(value, noOffset, buffer, noOffset, (short) value.length);
-            apdu.sendBytes(noOffset, (short) value.length); 
+            apdu.setOutgoingLength(counterLength);
+            buffer[noOffset] = value;
+            apdu.sendBytes(noOffset, counterLength);
             break;
         // DECREMENT instruction
         case (byte)0: 
-            if (value[0] > 0) {
+            if (value > 0) {
                 // decrease value and return new value
-                value[0] = value[0]--;
-                apdu.setOutgoingLength((short) value.length);
-                Util.arrayCopy(value, noOffset, buffer, noOffset, (short) value.length);
-                apdu.sendBytes(noOffset, (short) value.length); 
+                value = (byte)(value - 1);
+                apdu.setOutgoingLength(counterLength);
+                buffer[noOffset] = value;
+                apdu.sendBytes(noOffset, counterLength);
             } else {
                 // if counter cannot be decremented
                 ISOException.throwIt(ISO7816.SW_CONDITIONS_NOT_SATISFIED);
