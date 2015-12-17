@@ -7,8 +7,7 @@ public class CounterApplet extends Applet
     final static short noOffset = (short) 0;
     final static short counterLength = (short) 1;
 
-    //final byte[] value;
-    protected byte value;
+    byte value;
  
     // Stores the counter value received as installation parameter
     protected CounterApplet(byte[] bArray, short bOffset, byte bLength){
@@ -56,10 +55,9 @@ public class CounterApplet extends Applet
             apdu.sendBytes(noOffset, counterLength);
             break;
         // DECREMENT instruction
-        case (byte)0: 
+        case (byte)0x00: 
             if (value > 0) {
-                // decrease value and return new value
-                value = (byte)(value - 1);
+                value--;
                 apdu.setOutgoingLength(counterLength);
                 buffer[noOffset] = value;
                 apdu.sendBytes(noOffset, counterLength);
